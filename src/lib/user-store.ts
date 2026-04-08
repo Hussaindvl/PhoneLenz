@@ -1,6 +1,6 @@
-import fs from "fs";
-import path from "path";
 import { compare, hash } from "bcryptjs";
+import { ObjectId } from "mongodb";
+import { getDatabase } from "./mongodb";
 
 export type UserRecord = {
   id: string;
@@ -12,27 +12,40 @@ export type UserRecord = {
   createdAt: string;
 };
 
-const usersFile = path.join(process.cwd(), "src", "lib", "users.json");
-
-function ensureUsersFile() {
-  if (!fs.existsSync(usersFile)) {
-    fs.writeFileSync(usersFile, JSON.stringify([], null, 2), "utf-8");
-  }
+interface UserDocument {
+  _id: ObjectId;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone?: string;
+  passwordHash: string;
+  createdAt: string;
 }
 
-function readUsers(): UserRecord[] {
-  ensureUsersFile();
-  const raw = fs.readFileSync(usersFile, "utf-8");
-  return JSON.parse(raw) as UserRecord[];
-}
+type NewUserDocument = Omit<UserDocument, "_id">;
 
-function writeUsers(users: UserRecord[]) {
-  fs.writeFileSync(usersFile, JSON.stringify(users, null, 2), "utf-8");
+const usersCollection = "users";
+
+function mapUserDocument(doc: UserDocument): UserRecord {
+  return {
+    id: doc._id.toString(),
+    firstName: doc.firstName,
+    lastName: doc.lastName,
+    email: doc.email,
+    phone: doc.phone,
+    passwordHash: doc.passwordHash,
+    createdAt: doc.createdAt,
+  };
 }
 
 export async function findUserByEmail(email: string): Promise<UserRecord | undefined> {
-  const users = readUsers();
-  return users.find((user) => user.email.toLowerCase() === email.toLowerCase());
+  const normalizedEmail = email.trim().toLowerCase();
+  const db = await getDatabase();
+  const existingUser = await db
+    .collection<UserDocument>(usersCollection)
+    .findOne({ email: normalizedEmail });
+
+  return existingUser ? mapUserDocument(existingUser) : undefined;
 }
 
 export async function createUser(data: {
@@ -42,26 +55,55 @@ export async function createUser(data: {
   password: string;
   phone?: string;
 }): Promise<UserRecord> {
-  const existingUser = await findUserByEmail(data.email);
+  const normalizedEmail = data.email.trim().toLowerCase();
+  const db = await getDatabase();
+  const users = db.collection<UserDocument>(usersCollection);
+  const usersInsert = db.collection<NewUserDocument>(usersCollection);
+
+  const existingUser = await users.findOne({ email: normalizedEmail });
   if (existingUser) {
     throw new Error("A user with that email already exists.");
   }
 
   const passwordHash = await hash(data.password, 10);
-  const newUser: UserRecord = {
-    id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+  const userData: NewUserDocument = {
     firstName: data.firstName.trim(),
     lastName: data.lastName.trim(),
-    email: data.email.trim().toLowerCase(),
+    email: normalizedEmail,
     phone: data.phone?.trim(),
     passwordHash,
     createdAt: new Date().toISOString(),
   };
 
-  const users = readUsers();
-  users.push(newUser);
-  writeUsers(users);
-  return newUser;
+  const insertResult = await usersInsert.insertOne(userData);
+  const createdUser = await users.findOne({ _id: insertResult.insertedId });
+
+  if (!createdUser) {
+    throw new Error("Unable to create user account.");
+  }
+
+  return mapUserDocument(createdUser);
+}
+
+export async function updatePassword(email: string, password: string): Promise<UserRecord> {
+  const normalizedEmail = email.trim().toLowerCase();
+  const db = await getDatabase();
+  const users = db.collection<UserDocument>(usersCollection);
+
+  const existingUser = await users.findOne({ email: normalizedEmail });
+  if (!existingUser) {
+    throw new Error("Email does not exist.");
+  }
+
+  const passwordHash = await hash(password, 10);
+  await users.updateOne({ _id: existingUser._id }, { $set: { passwordHash } });
+
+  const updatedUser = await users.findOne({ _id: existingUser._id });
+  if (!updatedUser) {
+    throw new Error("Unable to update password.");
+  }
+
+  return mapUserDocument(updatedUser);
 }
 
 export async function verifyCredentials(email: string, password: string): Promise<UserRecord | null> {
