@@ -24,7 +24,7 @@ const CARDS: ServiceCard[] = [
   {
     id: 1,
     emoji: "🔧",
-    href: "/repair/book",
+    href: "/market/repairephone",
     label: "Most Popular",
     labelBg: "#9FE1CB",
     labelColor: "#085041",
@@ -38,7 +38,7 @@ const CARDS: ServiceCard[] = [
   {
     id: 2,
     emoji: "📱",
-    href: "/buy",
+    href: "/market/buyphone",
     label: "New Arrivals",
     labelBg: "#F5C4B3",
     labelColor: "#712B13",
@@ -52,7 +52,7 @@ const CARDS: ServiceCard[] = [
   {
     id: 3,
     emoji: "🏷️",
-    href: "/sale",
+    href: "/market/sellphone",
     label: "Limited Time",
     labelBg: "#FAC775",
     labelColor: "#412402",
@@ -68,7 +68,7 @@ const CARDS: ServiceCard[] = [
   {
     id: 4,
     emoji: "💸",
-    href: "/sell",
+    href: "/market/sellphone",
     label: "Earn Cash",
     labelBg: "#B5D4F4",
     labelColor: "#042C53",
@@ -84,7 +84,7 @@ const CARDS: ServiceCard[] = [
   {
     id: 5,
     emoji: "🛡️",
-    href: "/protection",
+    href: "/market/repairephone",
     label: "Best Seller",
     labelBg: "#CECBF6",
     labelColor: "#26215C",

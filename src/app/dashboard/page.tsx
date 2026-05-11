@@ -37,7 +37,7 @@ export default function DashboardPage() {
   // Mock user stats
   const stats = [
     { label: "Phones Sold", value: "12", icon: "📱" },
-    { label: "Total Earnings", value: "₹1,84,750", icon: "₹" },
+    { label: "Total Earnings", value: "PKR 1,84,750", icon: "PKR" },
     { label: "Active Listings", value: "3", icon: "🔥" },
   ];
 
@@ -303,7 +303,7 @@ export default function DashboardPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">Asking Price (₹)</label>
+                  <label className="block text-sm font-medium text-slate-700 mb-2">Asking Price (PKR)</label>
                   <input
                     type="number"
                     name="price"
@@ -375,7 +375,7 @@ export default function DashboardPage() {
               <div className="h-48 bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center text-6xl">📱</div>
               <div className="p-5">
                 <p className="font-semibold">iPhone 14 Pro • 128GB</p>
-                <p className="text-sm text-emerald-600 font-medium">Superb • ₹52,000</p>
+                <p className="text-sm text-emerald-600 font-medium">Superb • PKR 52,000</p>
                 <p className="text-xs text-slate-500 mt-3">3 views • 2 offers</p>
               </div>
             </div>
@@ -384,7 +384,7 @@ export default function DashboardPage() {
               <div className="h-48 bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center text-6xl">📱</div>
               <div className="p-5">
                 <p className="font-semibold">Samsung S23 Ultra • 256GB</p>
-                <p className="text-sm text-emerald-600 font-medium">Good • ₹68,000</p>
+                <p className="text-sm text-emerald-600 font-medium">Good • PKR 68,000</p>
                 <p className="text-xs text-slate-500 mt-3">7 views • Live</p>
               </div>
             </div>

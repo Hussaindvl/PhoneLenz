@@ -6,6 +6,7 @@ interface ListingDocument {
   brand: string;
   model: string;
   condition: string;
+  color?: string;
   price: number;
   description: string;
   imageUrl: string;
@@ -20,6 +21,7 @@ export type ListingRecord = {
   brand: string;
   model: string;
   condition: string;
+  color: string;
   price: number;
   description: string;
   imageUrl: string;
@@ -35,6 +37,7 @@ function mapListingDocument(doc: ListingDocument): ListingRecord {
     brand: doc.brand,
     model: doc.model,
     condition: doc.condition,
+    color: doc.color ?? "",
     price: doc.price,
     description: doc.description,
     imageUrl: doc.imageUrl,
@@ -62,6 +65,7 @@ export async function createListing(data: {
   brand: string;
   model: string;
   condition: string;
+  color: string;
   price: number;
   description: string;
   imageUrl: string;

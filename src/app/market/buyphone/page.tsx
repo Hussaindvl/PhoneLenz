@@ -3,9 +3,9 @@ import { getAllListings } from "@/lib/listing-store";
 
 export default async function page() {
   const listings = await getAllListings();
-  const priceFormatter = new Intl.NumberFormat("en-IN", {
+  const priceFormatter = new Intl.NumberFormat("en-PK", {
     style: "currency",
-    currency: "INR",
+    currency: "PKR",
     maximumFractionDigits: 0,
   });
 

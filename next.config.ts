@@ -11,6 +11,7 @@ const nextConfig: NextConfig = {
 
   // Fixed: Added images.remotePatterns to allow external images
   images: {
+    qualities: [75, 90],
     remotePatterns: [
       {
         protocol: "https",
